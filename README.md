@@ -25,7 +25,7 @@ $methods = [
 ```
 
 ### properties/properties.php
-Standard INI-file. All settings may be used inside project with `Config::get()` method.
+Standard INI-file. All settings may be used inside the project with `Config::get()` method.
 
 **properties.php**
 ```ini
@@ -44,10 +44,11 @@ $dbUser = Config::get('db_user');
 ## Using
 See [class/methods/Example.php](https://github.com/rjhdby/api-skeleton/blob/master/class/methods/Example.php).
 
-1) Each method must implements `method\Method` interface.
+1. Each method must implements `method\Method` interface.
   * Method `__construct` must receive an associative array ($_GET or $_POST will be forwarded to constructor)
   * Method `__invoke` must return an array or throw an Exception
-2) Each method must have mapping record in `methods.php` inside `$methods` array.
+
+2. Each method must have mapping record in `methods.php` inside `$methods` array.
 
 The request to `index.php` must contains name of desired method, or an `Wrong method` error will be returned.
 
@@ -57,7 +58,7 @@ The response will be a JSON string.
 
 ```json
 {
-   "r": returned by __invoke() array,
+   "r": an array returned by __invoke(),
    "e": {}
 }
 ```

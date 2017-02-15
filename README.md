@@ -2,6 +2,8 @@
 
 ## Setup
 
+### PHP 5.5 and higher compatibility
+
 ### environment.php
 File with global project properties. You **must** view and edit it before using this skeleton.
 ```php

@@ -4,15 +4,13 @@ header('Content-Type: application/json; charset=utf-8');
 require_once __DIR__ . '/define.php';
 require_once __DIR__ . '/methods.php';
 
-if (DEBUG && isset($_GET[ METHOD ])) {
-    $_POST = $_GET;
-}
+$payload = (DEBUG && isset($_GET[ METHOD ])) || GET ? $_GET : $_POST;
 
-$methodName = isset($_POST[ METHOD ]) ? $_POST[ METHOD ] : 'wrongMethod';
+$methodName = isset($payload[ METHOD ]) ? $payload[ METHOD ] : 'wrongMethod';
 $class      = isset($methods[ $methodName ]) ? $methods[ $methodName ] : $methods['wrongMethod'];
 
 $result  = ['r' => [], 'e' => []];
-$request = new $class($_POST);
+$request = new $class($payload);
 try {
     $result['r'] = $request();
 } catch (Exception $e) {

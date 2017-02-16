@@ -14,12 +14,11 @@ class Config
      * @return string
      */
     public static function get($name, $default = null) {
-        require_once __DIR__ . '/../../environment.php';
         if (empty($name)) {
             Report::reportFatal('Nothing to get', InvalidArgumentException::class);
         }
         if (self::$settings === null) {
-            parse_ini_file(SETTINGS);
+            parse_ini_file(PROPERTIES);
         }
         if (isset(self::$settings[ $name ])) {
             return (string)self::$settings[ $name ];

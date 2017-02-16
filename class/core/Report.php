@@ -11,7 +11,6 @@ class Report
      * @param Exception $type
      */
     public static function report($string, $type = Exception::class) {
-        require_once __DIR__ . '/../../environment.php';
         if (EXCEPTIONS) {
             throw new $type($string);
         } else {

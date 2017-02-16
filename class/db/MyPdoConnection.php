@@ -5,7 +5,7 @@ use core\Report;
 
 class MyPdoConnection
 {
-    //Settings from properties.php
+    //Settings from config.php
     const TYPE    = 'db_type';
     const HOST    = 'localhost';
     const USER    = 'user';
@@ -15,6 +15,8 @@ class MyPdoConnection
 
     /** @var PDO $db */
     private static $db;
+
+    private function __construct() { }
 
     /**
      * @return PDO

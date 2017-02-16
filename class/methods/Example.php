@@ -2,6 +2,8 @@
 /** @api-call example */
 namespace methods;
 
+use core\Method;
+
 class Example implements Method
 {
     private $data;

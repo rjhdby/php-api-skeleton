@@ -3,6 +3,7 @@
 namespace methods;
 
 use BadMethodCallException;
+use core\Method;
 use core\Report;
 
 class WrongMethod implements Method

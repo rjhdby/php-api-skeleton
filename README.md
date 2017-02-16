@@ -13,17 +13,37 @@ define('DEBUG', true);                                    //Whether use debug mo
 define('EXCEPTIONS', true);                               //Whether use exceptions instead of E_USER_NOTICE
 define('METHOD', 'm');                                    //Name of parameter in POST/GET data that contains method name
 define('GET', false);                                     //Whether use $_GET instead of $_POST
+define('STATIC_MAPPING', false);                          //Whether use static class mapping
 ```
-### methods.php
-Contains one associative array `$methods` with names of methods to classes mapping.
-```php
-use methods\Example;
-use methods\WrongMethod;
 
-$methods = [
-    'example'     => Example::class,
-    'wrongMethod' => WrongMethod::class
-];
+## Using
+See [class/methods/Example.php](https://github.com/rjhdby/api-skeleton/blob/master/class/methods/Example.php).
+
+Each method must implements `method\Method` interface.
+  * Method `__construct` must receive an associative array ($_GET or $_POST will be forwarded to constructor)
+  * Method `__invoke` must return an array or throw an Exception
+
+The request to `index.php` must contains name of desired method, or an `Wrong method` error will be returned.
+
+The response will be a JSON string.
+   
+### Normal response
+```json
+{
+   "r": an array returned by __invoke(),
+   "e": {}
+}
+```
+
+### Error response
+```json
+{
+   "r": {},
+   "e": {
+       "code": $exception.getCode(),
+       "text": $exception.getMessage()
+   }
+}
 ```
 
 ### properties/properties.php
@@ -43,36 +63,34 @@ db_dbname=db
 $dbUser = Config::get('db_user');
 ```
 
-## Using
-See [class/methods/Example.php](https://github.com/rjhdby/api-skeleton/blob/master/class/methods/Example.php).
+## Dynamic class mapping
+Default behavior. Set constant `STATIC_MAPPING` in `environment.php` to `TRUE` to disable.
 
-1. Each method must implements `method\Method` interface.
-  * Method `__construct` must receive an associative array ($_GET or $_POST will be forwarded to constructor)
-  * Method `__invoke` must return an array or throw an Exception
+1. All api-call classes should be placed in `class/methods/` directory. 
+2. Each api-call class should contain PHP-doc comment with `@api-call` annotation before namespace declaration. Value of this annotation will be used as api-call method name.
 
-2. Each method must have mapping record in `methods.php` inside `$methods` array.
+```php
+<?php
+/** @api-call wrongMethod */
+namespace methods;
 
-The request to `index.php` must contains name of desired method, or an `Wrong method` error will be returned.
-
-The response will be a JSON string.
-   
-### Normal response
-
-```json
-{
-   "r": an array returned by __invoke(),
-   "e": {}
+class WrongMethod implements Method{
+    public function __construct($data) {}
+    public function __invoke() {}
 }
 ```
 
-### Error response
+In this case you can delete file `methods.php`
 
-```json
-{
-   "r": {},
-   "e": {
-       "code": $exception.getCode(),
-       "text": $exception.getMessage()
-   }
-}
+## Static class mapping 
+Disabled by default.
+Set constant `STATIC_MAPPING` in `environment.php` to `TRUE` to use static mapping instead of dynamic.
+
+### methods.php
+Contains one associative array `$methods` with names of methods to classes mapping.
+```php
+$methods = [
+    'example'     => methods\Example::class,
+    'wrongMethod' => methods\WrongMethod::class
+];
 ```

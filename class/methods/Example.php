@@ -1,5 +1,5 @@
 <?php
-
+/** @api-call example */
 namespace methods;
 
 class Example implements Method

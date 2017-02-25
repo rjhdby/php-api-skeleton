@@ -47,7 +47,7 @@ class MyPdoConnection
         return Config::get(self::TYPE) . ':' .
                'host=' . Config::get(self::HOST) . ';' .
                'dbname=' . Config::get(self::DB) . ';' .
-               'charset=' . Config::get(self::CHARSET, 'utf-8');
+               'charset=' . Config::get(self::CHARSET, 'utf8');
     }
 
     private static function setAttributes() {

@@ -1,5 +1,7 @@
 <?php
 
+namespace db;
+
 use core\Config;
 use core\Report;
 
@@ -13,13 +15,13 @@ class MyPdoConnection
     const DB      = 'db_dbname';
     const CHARSET = 'db_charset';
 
-    /** @var PDO $db */
+    /** @var \PDO $db */
     private static $db;
 
     private function __construct() { }
 
     /**
-     * @return PDO
+     * @return \PDO
      */
     public static function getInstance() {
         if (null === self::$db) {
@@ -31,9 +33,9 @@ class MyPdoConnection
 
     private static function connect() {
         try {
-            self::$db = new PDO(self::getConnectionString(), Config::get(self::USER), Config::get(self::PASS));
+            self::$db = new \PDO(self::getConnectionString(), Config::get(self::USER), Config::get(self::PASS));
             self::setAttributes();
-        } catch (PDOException $e) {
+        } catch (\PDOException $e) {
             Report::reportFatal($e->getMessage());
         }
     }
@@ -49,6 +51,6 @@ class MyPdoConnection
     }
 
     private static function setAttributes() {
-        self::$db->setAttribute(PDO::ATTR_CASE, PDO::CASE_LOWER);
+        self::$db->setAttribute(\PDO::ATTR_CASE, \PDO::CASE_LOWER);
     }
 }

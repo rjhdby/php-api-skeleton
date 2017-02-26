@@ -18,39 +18,40 @@ class MyPdoConnection
     /** @var \PDO $db */
     private static $db;
 
-    private function __construct() { }
+    private function __construct () { }
 
     /**
      * @return \PDO
      */
-    public static function getInstance() {
+    public static function getInstance () {
         if (null === self::$db) {
-            self::connect();
+            self::connect ();
         }
 
         return self::$db;
     }
 
-    private static function connect() {
+    private static function connect () {
         try {
-            self::$db = new \PDO(self::getConnectionString(), Config::get(self::USER), Config::get(self::PASS));
-            self::setAttributes();
+            self::$db = new \PDO(self::getConnectionString (), Config::get (self::USER), Config::get (self::PASS));
+            self::setAttributes ();
         } catch (\PDOException $e) {
-            Report::reportFatal($e->getMessage());
+            Report::reportFatal ($e->getMessage ());
         }
     }
 
     /**
      * @return string
      */
-    private static function getConnectionString() {
-        return Config::get(self::TYPE) . ':' .
-               'host=' . Config::get(self::HOST) . ';' .
-               'dbname=' . Config::get(self::DB) . ';' .
-               'charset=' . Config::get(self::CHARSET, 'utf8');
+    private static function getConnectionString () {
+        return Config::get (self::TYPE) . ':' .
+               'host=' . Config::get (self::HOST) . ';' .
+               'dbname=' . Config::get (self::DB) . ';' .
+               'charset=' . Config::get (self::CHARSET, 'utf8');
     }
 
-    private static function setAttributes() {
-        self::$db->setAttribute(\PDO::ATTR_CASE, \PDO::CASE_LOWER);
+    private static function setAttributes () {
+        self::$db->setAttribute (\PDO::ATTR_CASE, \PDO::CASE_LOWER);
+//        self::$db->query ("SET NAMES UTF8");
     }
 }

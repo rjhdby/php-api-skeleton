@@ -3,6 +3,7 @@
 use core\Report;
 use PHPUnit\Framework\TestCase;
 
+/** @noinspection LongInheritanceChainInspection */
 class ReportTest extends TestCase
 {
     public function testReportException() {

@@ -3,6 +3,7 @@
 use core\Config;
 use PHPUnit\Framework\TestCase;
 
+/** @noinspection LongInheritanceChainInspection */
 final class ConfigTest extends TestCase
 {
     public function testGetConfigValue() {
@@ -15,13 +16,13 @@ final class ConfigTest extends TestCase
     public function testGetConfigDefaultValue() {
         $this->assertEquals(
             'mysql',
-            Config::get('blablabla', 'mysql')
+            Config::get('nothing', 'mysql')
         );
     }
 
     public function testExceptionOnWrongKey() {
         $this->expectException(InvalidArgumentException::class);
-        Config::get('blablabla');
+        Config::get('nothing');
     }
 
     public function testExceptionOnAbsentKey() {

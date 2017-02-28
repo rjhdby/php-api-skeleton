@@ -8,11 +8,9 @@ class Report
 {
     /**
      * @param string $string
-     * @param Exception $type
      */
-    public static function reportFatal($string, $type = Exception::class) {
-        self::report($string, $type);
-        die('');
+    public static function reportFatal($string) {
+        trigger_error($string, E_USER_ERROR);
     }
 
     /**
@@ -23,6 +21,6 @@ class Report
         if (EXCEPTIONS) {
             throw new $type($string);
         }
-        trigger_error($string);
+        trigger_error($string, E_USER_WARNING);
     }
 }

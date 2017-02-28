@@ -1,5 +1,3 @@
-<?php
-$methods = [
-    'example'     => methods\Example::class,
-    'wrongMethod' => methods\WrongMethod::class
-];
+;<?php /*
+example = methods\Example
+wrongMethod = methods\WrongMethod

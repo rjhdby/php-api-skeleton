@@ -2,6 +2,7 @@
 /** @api-call example */
 namespace methods;
 
+use core\Config;
 use core\Method;
 
 class Example implements Method
@@ -20,6 +21,6 @@ class Example implements Method
      * @return array
      */
     public function __invoke() {
-        return $this->data;
+        return [Config::get('db_type')];
     }
 }

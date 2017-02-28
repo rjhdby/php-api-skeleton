@@ -15,33 +15,40 @@ class Config
      */
     public static function get($name, $default = null) {
         if (empty($name)) {
-            Report::reportFatal('Nothing to get', InvalidArgumentException::class);
+            Report::report('Nothing to get', InvalidArgumentException::class);
         }
         if (self::$settings === null) {
-            self::loadSettings();
+            self::$settings = self::loadSettings(PROPERTIES);
         }
         if (isset(self::$settings[ $name ])) {
             return (string)self::$settings[ $name ];
         } elseif ($default !== null) {
             return $default;
         }
-        Report::reportFatal("Setting $name not found", InvalidArgumentException::class);
+        Report::report("Setting $name not found", InvalidArgumentException::class);
 
         return null;
     }
 
-    private static function loadSettings() {
-        if (function_exists('parse_ini_file')) {
-            self::$settings = parse_ini_file(PROPERTIES);
+    private static function loadSettings($fileName) {
+        return function_exists('parse_ini_file')
+            ? parse_ini_file($fileName)
+            : self::parseIniFile($fileName);
+    }
 
-            return;
-        }
-        $content = preg_grep("/^[\w .]+=.*/", explode(PHP_EOL, file_get_contents(PROPERTIES)));
+    private static function parseIniFile($fileName) {
+        $settings = [];
+        $content  = preg_grep("/^[\w .]+=.*/", explode("\n", file_get_contents($fileName)));
         foreach ($content as $row) {
-            $row                    = strstr($row . ';', ';', true);
-            $key                    = trim(strstr($row, '=', true), " \n\r");
-            $value                  = trim(strstr($row, '=', false), " \"=\n\r");
-            self::$settings[ $key ] = $value;
+            $row              = strstr($row . ';', ';', true);
+            $key              = trim(strstr($row, '=', true), " \n\r");
+            $settings[ $key ] = trim(strstr($row, '=', false), " \"=\n\r");
         }
+
+        return $settings;
+    }
+
+    public static function parseCustomConfig($fileName) {
+        return self::loadSettings($fileName);
     }
 }

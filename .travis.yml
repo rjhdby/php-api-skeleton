@@ -4,6 +4,4 @@ php:
   - '5.6'
   - '7.0'
   - '7.1'
-  - hhvm
-  - nightly
-script: phpunit --bootstrap test\bootstrap.php test/
+script: phpunit --bootstrap test\\bootstrap.php test/

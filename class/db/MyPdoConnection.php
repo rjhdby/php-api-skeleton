@@ -15,25 +15,25 @@ class MyPdoConnection
     const DB      = 'db_dbname';
     const CHARSET = 'db_charset';
 
-    /** @var \PDO $db */
-    private static $db;
+    /** @var \PDO $connection */
+    private static $connection;
 
-    private function __construct () { }
+    protected function __construct() { }
 
     /**
      * @return \PDO
      */
     public static function getInstance () {
-        if (null === self::$db) {
+        if (null === self::$connection) {
             self::connect ();
         }
 
-        return self::$db;
+        return self::$connection;
     }
 
     private static function connect () {
         try {
-            self::$db = new \PDO(self::getConnectionString (), Config::get (self::USER), Config::get (self::PASS));
+            self::$connection = new \PDO(self::getConnectionString(), Config::get(self::USER), Config::get(self::PASS));
             self::setAttributes ();
         } catch (\PDOException $e) {
             Report::reportFatal ($e->getMessage ());
@@ -51,7 +51,7 @@ class MyPdoConnection
     }
 
     private static function setAttributes () {
-        self::$db->setAttribute (\PDO::ATTR_CASE, \PDO::CASE_LOWER);
+        self::$connection->setAttribute(\PDO::ATTR_CASE, \PDO::CASE_LOWER);
 //        self::$db->query ("SET NAMES UTF8");
     }
 }

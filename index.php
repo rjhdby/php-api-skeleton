@@ -75,7 +75,6 @@ if (STATIC_MAPPING) {
         }
     }
     unset($tokens, $namespace, $class, $method);
-//    var_dump($methods);
 }
 
 

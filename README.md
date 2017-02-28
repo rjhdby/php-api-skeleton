@@ -31,7 +31,7 @@ The response will be a JSON string.
 ### Normal response
 ```json
 {
-   "r": an array returned by __invoke(),
+   "r": ["an array returned by __invoke()"],
    "e": {}
 }
 ```
@@ -41,8 +41,8 @@ The response will be a JSON string.
 {
    "r": {},
    "e": {
-       "code": $exception.getCode(),
-       "text": $exception.getMessage()
+       "code": "$exception.getCode()",
+       "text": "$exception.getMessage()"
    }
 }
 ```

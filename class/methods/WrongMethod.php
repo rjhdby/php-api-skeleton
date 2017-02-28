@@ -12,7 +12,7 @@ class WrongMethod implements Method
      * Method constructor.
      * @param array $data
      */
-    public function __construct($data) {
+    public function __construct($data = null) {
     }
 
     /**

@@ -1,5 +1,7 @@
 <?php
-/** @api-call wrongMethod */
+/**
+ * @api-call wrongMethod
+ */
 namespace methods;
 
 use BadMethodCallException;

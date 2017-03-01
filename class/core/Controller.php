@@ -33,31 +33,19 @@ class Controller
     }
 
     private static function parseTokens($tokens) {
-        $namespace = false;
-        $class     = false;
-        $method    = false;
+        $namespace = '';
+        $method    = '';
         for ($i = 0, $max = count($tokens); $i < $max; $i++) {
             switch ($tokens[ $i ][0]) {
                 case T_CLASS:
-                    $class = $tokens[ $i + 2 ][1];
-                    break;
+                    return $method ? [$method => $namespace . '\\' . $tokens[ $i + 2 ][1]] : false;
                 case T_NAMESPACE:
                     $namespace = $tokens[ $i + 2 ][1];
                     break;
                 case T_DOC_COMMENT:
-                    if (preg_match('/@api-call/', $tokens[ $i ][1]) !== 0) {
-                        $method = preg_replace("/.*@api-call\s+(\w+).*/", "$1", $tokens[ $i ][1]);
+                    if (preg_match('/@api-call/m', $tokens[ $i ][1]) !== 0) {
+                        $method = preg_replace("/.*@api-call\s+(\w+).*/s", "$1", $tokens[ $i ][1]);
                     }
-                    break;
-            }
-            if ($class && !$method) {
-                return false;
-            }
-            if ($class && $method && !$namespace) {
-                return [$method => $class];
-            }
-            if ($class && $method && $namespace) {
-                return [$method => $namespace . '\\' . $class];
             }
         }
 

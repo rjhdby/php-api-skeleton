@@ -5,8 +5,10 @@ php:
   - 7.1
 before_script: composer install
 script:
+  - mkdir -p build
   - mkdir -p build/logs
   - vendor/bin/phpunit
-#--coverage-clover build/logs/clover.xml
 after_success:
+  - ls -l build/logs/
+  - cat build/logs/clover.xml
   - travis_retry php vendor/bin/coveralls -v

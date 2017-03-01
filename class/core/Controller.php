@@ -23,39 +23,42 @@ class Controller
             if (substr($fileName, -4) !== '.php') {
                 continue;
             }
-            $namespace = false;
-            $class     = false;
-            $method    = false;
-            $tokens    = token_get_all(file_get_contents(ROOT . '/class/methods/' . $fileName));
-            for ($i = 0, $max = count($tokens); $i < $max; $i++) {
-                switch ($tokens[ $i ][0]) {
-                    case T_CLASS:
-                        $class = $tokens[ $i + 2 ][1];
-                        break;
-                    case T_NAMESPACE:
-                        $namespace = $tokens[ $i + 2 ][1];
-                        break;
-                    case T_DOC_COMMENT:
-                        if (preg_match('/@api-call/', $tokens[ $i ][1]) !== 0) {
-                            $method = preg_replace("/.*@api-call\s+(\w+).*/", "$1", $tokens[ $i ][1]);
-                        }
-                        break;
-                }
-                if ($class && !$method) {
-                    break;
-                }
-                if ($class && $method && !$namespace) {
-                    $methods[ $method ] = $class;
-                    break;
-                }
-                if ($class && $method && $namespace) {
-                    $methods[ $method ] = $namespace . '\\' . $class;
-                    break;
-                }
-            }
+            self::parseTokens(token_get_all(file_get_contents(ROOT . '/class/methods/' . $fileName)));
         }
 
         return $methods;
+    }
+
+    private static function parseTokens($tokens) {
+        $namespace = false;
+        $class     = false;
+        $method    = false;
+        for ($i = 0, $max = count($tokens); $i < $max; $i++) {
+            switch ($tokens[ $i ][0]) {
+                case T_CLASS:
+                    $class = $tokens[ $i + 2 ][1];
+                    break;
+                case T_NAMESPACE:
+                    $namespace = $tokens[ $i + 2 ][1];
+                    break;
+                case T_DOC_COMMENT:
+                    if (preg_match('/@api-call/', $tokens[ $i ][1]) !== 0) {
+                        $method = preg_replace("/.*@api-call\s+(\w+).*/", "$1", $tokens[ $i ][1]);
+                    }
+                    break;
+            }
+            if ($class && !$method) {
+                break;
+            }
+            if ($class && $method && !$namespace) {
+                $methods[ $method ] = $class;
+                break;
+            }
+            if ($class && $method && $namespace) {
+                $methods[ $method ] = $namespace . '\\' . $class;
+                break;
+            }
+        }
     }
 
     public function run() {

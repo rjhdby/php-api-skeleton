@@ -1,5 +1,5 @@
 <?php
-@include __DIR__ . '/../vendor/autoload.php'
+@include __DIR__ . '/../vendor/autoload.php';
 
 define('ROOT', str_replace('\\', '/', __DIR__) . '/..');  //Root api directory
 define('PROPERTIES', ROOT . '/config/properties.php');    //Properties file path

@@ -1,10 +1,9 @@
 <?php
 
 use core\Controller;
-use PHPUnit\Framework\TestCase;
 
 /** @noinspection LongInheritanceChainInspection */
-class ControllerTest extends TestCase
+class ControllerTest extends PHPUnit_Framework_TestCase
 {
     public function testExampleCall() {
         $controller = new Controller(['m' => 'example']);

@@ -1,10 +1,9 @@
 <?php
 
 use core\Report;
-use PHPUnit\Framework\TestCase;
 
 /** @noinspection LongInheritanceChainInspection */
-class ReportTest extends TestCase
+class ReportTest extends PHPUnit_Framework_TestCase
 {
     public function testReportException() {
         $this->expectException(InvalidArgumentException::class);

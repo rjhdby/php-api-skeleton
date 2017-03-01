@@ -1,10 +1,9 @@
 <?php
 
 use core\Config;
-use PHPUnit\Framework\TestCase;
 
 /** @noinspection LongInheritanceChainInspection */
-final class ConfigTest extends TestCase
+final class ConfigTest extends PHPUnit_Framework_TestCase
 {
     public function testGetConfigValue() {
         $this->assertEquals(

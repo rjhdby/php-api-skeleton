@@ -3,7 +3,6 @@
 namespace db;
 
 use core\Config;
-use core\Report;
 
 class MyPdoConnection
 {
@@ -12,20 +11,20 @@ class MyPdoConnection
     const HOST    = 'localhost';
     const USER    = 'user';
     const PASS    = 'db_pass';
-    const DB      = 'db_dbname';
+    const DB      = 'db_name';
     const CHARSET = 'db_charset';
 
     /** @var \PDO $connection */
     private static $connection;
 
-    protected function __construct() { }
+    protected function __construct () { }
 
     /**
      * @return \PDO
      */
     public static function getInstance () {
         if (null === self::$connection) {
-            self::connect ();
+            self::connect();
         }
 
         return self::$connection;
@@ -34,9 +33,10 @@ class MyPdoConnection
     private static function connect () {
         try {
             self::$connection = new \PDO(self::getConnectionString(), Config::get(self::USER), Config::get(self::PASS));
-            self::setAttributes ();
+            self::setAttributes();
         } catch (\PDOException $e) {
-            Report::reportFatal ($e->getMessage ());
+            echo $e->getTraceAsString();
+            throw $e;
         }
     }
 
@@ -44,10 +44,10 @@ class MyPdoConnection
      * @return string
      */
     private static function getConnectionString () {
-        return Config::get (self::TYPE) . ':' .
-               'host=' . Config::get (self::HOST) . ';' .
-               'dbname=' . Config::get (self::DB) . ';' .
-               'charset=' . Config::get (self::CHARSET, 'utf8');
+        return Config::get(self::TYPE) . ':' .
+               'host=' . Config::get(self::HOST) . ';' .
+               'dbname=' . Config::get(self::DB) . ';' .
+               'charset=' . Config::get(self::CHARSET, 'utf8');
     }
 
     private static function setAttributes () {

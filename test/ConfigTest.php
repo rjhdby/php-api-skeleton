@@ -42,7 +42,7 @@ final class ConfigTest extends PHPUnit_Framework_TestCase
             new Config(), 'parseIniFile'
         );
         $method->setAccessible(true);
-        $method->invoke(Config::class, PROPERTIES);
+        $method->invoke(new Config(), PROPERTIES);
         $this->assertEquals(
             'localhost',
             Config::get('db_host')

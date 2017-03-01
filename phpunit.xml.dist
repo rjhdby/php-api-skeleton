@@ -10,12 +10,14 @@
 >
  <testsuites>
   <testsuite name="RxPHP Test Suite">
-   <directory>./test/</directory>
+   <directory suffix="Test.php">./test/</directory>
   </testsuite>
  </testsuites>
  <filter>
   <whitelist processUncoveredFilesFromWhitelist="true">
-   <directory suffix="Test.php">./class/</directory>
+   <directory suffix=".php">./class/core/</directory>
+   <directory suffix=".php">./class/methods/</directory>
+   <directory suffix=".php">./class/db/</directory>
   </whitelist>
  </filter>
 

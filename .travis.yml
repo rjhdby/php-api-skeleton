@@ -6,5 +6,5 @@ php:
   - '7.1'
 install:
   - composer require phpunit/phpunit:5.7.14
-before_script: find / -name phpunit*
+#before_script: find / -name phpunit*
 script: phpunit --bootstrap test/bootstrap.php test/

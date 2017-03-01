@@ -39,7 +39,7 @@ final class ConfigTest extends PHPUnit_Framework_TestCase
 
     public function testGetConfigValueHard() {
         $method = new ReflectionMethod(
-            null, 'Config::parseIniFile'
+            new Config(), 'parseIniFile'
         );
         $method->setAccessible(true);
         $method->invoke(Config::class, PROPERTIES);

@@ -23,7 +23,10 @@ class Controller
             if (substr($fileName, -4) !== '.php') {
                 continue;
             }
-            self::parseTokens(token_get_all(file_get_contents(ROOT . '/class/methods/' . $fileName)));
+            $current = self::parseTokens(token_get_all(file_get_contents(ROOT . '/class/methods/' . $fileName)));
+            if ($current !== false) {
+                $methods[ key($current) ] = current($current);
+            }
         }
 
         return $methods;
@@ -48,17 +51,17 @@ class Controller
                     break;
             }
             if ($class && !$method) {
-                break;
+                return false;
             }
             if ($class && $method && !$namespace) {
-                $methods[ $method ] = $class;
-                break;
+                return [$method => $class];
             }
             if ($class && $method && $namespace) {
-                $methods[ $method ] = $namespace . '\\' . $class;
-                break;
+                return [$method => $namespace . '\\' . $class];
             }
         }
+
+        return false;
     }
 
     public function run() {

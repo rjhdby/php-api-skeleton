@@ -5,5 +5,5 @@ php:
   - '7.0'
   - '7.1'
 install:
-  - composer require phpunit/phpunit bundle:5.7.14
+  - composer require phpunit/phpunit:5.7.14
 script: phpunit --bootstrap test/bootstrap.php test/

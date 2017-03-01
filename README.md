@@ -1,4 +1,5 @@
 [![Code Climate](https://codeclimate.com/github/rjhdby/php-api-skeleton/badges/gpa.svg)](https://codeclimate.com/github/rjhdby/php-api-skeleton)
+[![Build Status](https://travis-ci.org/rjhdby/php-api-skeleton.svg?branch=master)](https://travis-ci.org/rjhdby/php-api-skeleton)
 # Simple skeleton for php backend api
 
 ## Setup

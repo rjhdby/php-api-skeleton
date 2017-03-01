@@ -5,10 +5,10 @@
 namespace methods;
 
 use BadMethodCallException;
-use core\Method;
+use core\MethodInterface;
 use core\Report;
 
-class WrongMethod implements Method
+class WrongMethod implements MethodInterface
 {
     /**
      * Method constructor.

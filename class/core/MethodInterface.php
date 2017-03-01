@@ -1,7 +1,7 @@
 <?php
 namespace core;
 
-interface Method
+interface MethodInterface
 {
     /**
      * Method constructor.

@@ -15,9 +15,11 @@
  </testsuites>
  <filter>
   <whitelist processUncoveredFilesFromWhitelist="true">
-   <directory suffix=".php">./class/core/</directory>
-   <directory suffix=".php">./class/methods/</directory>
-   <directory suffix=".php">./class/db/</directory>
+   <directory suffix=".php">./class/</directory>
+   <exclude>
+    <directory suffix="Interface.php">./class/</directory>
+    <file>./class/db/MyPdoConnection.php</file>
+   </exclude>
   </whitelist>
  </filter>
 

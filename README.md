@@ -1,6 +1,7 @@
+# Simple skeleton for php backend api
 [![Code Climate](https://codeclimate.com/github/rjhdby/php-api-skeleton/badges/gpa.svg)](https://codeclimate.com/github/rjhdby/php-api-skeleton)
 [![Build Status](https://travis-ci.org/rjhdby/php-api-skeleton.svg?branch=master)](https://travis-ci.org/rjhdby/php-api-skeleton)
-# Simple skeleton for php backend api
+[![Coverage Status](https://coveralls.io/repos/github/rjhdby/php-api-skeleton/badge.svg?branch=master)](https://coveralls.io/github/rjhdby/php-api-skeleton?branch=master)
 
 ## Setup
 
@@ -9,8 +10,9 @@
 ### config/environment.php
 File with global project properties. You **must** view and edit it before using this skeleton.
 ```php
-define('ROOT', '/srv/www/htdocs');                        //Root api directory
-define('SETTINGS', ROOT . '/config/properties.php');      //Properties file path
+define('ROOT', str_replace('\\', '/', __DIR__) . '/..');  //Root api directory
+define('PROPERTIES', ROOT . '/config/properties.php');    //Properties file path
+define('METHODS', ROOT . '/config/methods.php');          //Configuration file for static mapping
 define('DEBUG', true);                                    //Whether use debug mode
 define('EXCEPTIONS', true);                               //Whether use exceptions instead of E_USER_NOTICE
 define('METHOD', 'm');                                    //Name of parameter in POST/GET data that contains method name
@@ -21,7 +23,7 @@ define('STATIC_MAPPING', false);                          //Whether use static c
 ## Using
 See [class/methods/Example.php](https://github.com/rjhdby/api-skeleton/blob/master/class/methods/Example.php).
 
-Each method must implements `core\Method` interface.
+Each method must implements `core\MethodInterface` interface.
   * Method `__construct` must receive an associative array ($_GET or $_POST will be forwarded to constructor)
   * Method `__invoke` must return an array or throw an Exception
 
@@ -75,9 +77,9 @@ Default behavior. Set constant `STATIC_MAPPING` in `environment.php` to `TRUE` t
 <?php
 /** @api-call wrongMethod */
 namespace methods;
-use core\Method;
+use core\MethodInterface;
 
-class WrongMethod implements Method{
+class WrongMethod implements MethodInterface{
     public function __construct($data) {}
     public function __invoke() {}
 }
@@ -90,10 +92,8 @@ Disabled by default.
 Set constant `STATIC_MAPPING` in `environment.php` to `TRUE` to use static mapping instead of dynamic.
 
 ### config/methods.php
-Contains one associative array `$methods` with names of methods to classes mapping.
-```php
-$methods = [
-    'example'     => methods\Example::class,
-    'wrongMethod' => methods\WrongMethod::class
-];
+INI-style file with api calls to classes mapping.
+```ini
+example = methods\Example
+wrongMethod = methods\WrongMethod
 ```

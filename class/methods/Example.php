@@ -3,9 +3,9 @@
 namespace methods;
 
 use core\Config;
-use core\Method;
+use core\MethodInterface;
 
-class Example implements Method
+class Example implements MethodInterface
 {
     private $data;
 

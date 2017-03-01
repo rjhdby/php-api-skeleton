@@ -3,11 +3,10 @@ php:
   - 5.6
   - 7.0
   - 7.1
-install:
-  - composer require phpunit/phpunit:5.7.14
-  - composer require satooshi/php-coveralls
-before_script:
+before_script: composer install
+script:
   - mkdir -p build/logs
-script: vendor/bin/phpunit --coverage-clover build/logs/clover.xml
+  - vendor/bin/phpunit
+#--coverage-clover build/logs/clover.xml
 after_success:
   - travis_retry php vendor/bin/coveralls -v

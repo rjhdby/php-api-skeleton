@@ -60,9 +60,9 @@ class Controller
             ? $this->methods[ $methodName ]
             : $this->methods['wrongMethod'];
 
-        $result  = ['r' => [], 'e' => []];
-        $request = new $class($this->data);
+        $result = ['r' => [], 'e' => []];
         try {
+            $request     = new $class($this->data);
             $result['r'] = $request();
         } catch (\Exception $e) {
             $result['e'] = ['code' => $e->getCode(), 'text' => $e->getMessage()];

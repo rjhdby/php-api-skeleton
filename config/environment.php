@@ -3,7 +3,6 @@ define('ROOT', str_replace('\\', '/', __DIR__) . '/..');  //Root api directory
 define('PROPERTIES', ROOT . '/config/properties.php');    //Properties file path
 define('METHODS', ROOT . '/config/methods.php');          //Configuration file for static mapping
 define('DEBUG', true);                                    //Whether use debug mode
-define('EXCEPTIONS', true);                               //Whether use exceptions instead of E_USER_NOTICE
 define('METHOD', 'm');                                    //Name of parameter in POST/GET data that contains method name
 define('GET', false);                                     //Whether use $_GET instead of $_POST
 define('STATIC_MAPPING', false);                          //Whether use static class mapping

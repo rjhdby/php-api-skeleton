@@ -1,4 +1,8 @@
 <?php
+/**
+ * Global project properties
+ */
+
 define('ROOT', str_replace('\\', '/', __DIR__) . '/..');  //Root api directory
 define('PROPERTIES', ROOT . '/config/properties.php');    //Properties file path
 define('METHODS', ROOT . '/config/methods.php');          //Configuration file for static mapping

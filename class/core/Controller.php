@@ -1,11 +1,22 @@
 <?php
 namespace core;
-
+/**
+ * Class Controller
+ * @package core
+ *
+ * Main class that orchestrating api calls
+ */
 class Controller
 {
     private $methods = [];
     private $data;
 
+    /**
+     * $_POST or $_GET array will be passed as $data argument
+     * depends of GET and DEBUG constants set in environment.php
+     *
+     * @param array $data
+     */
     public function __construct($data) {
         $this->data    = $data;
         $this->methods = STATIC_MAPPING
@@ -52,6 +63,11 @@ class Controller
         return false;
     }
 
+    /**
+     * Process api call and return resulting array or throw an Exception
+     *
+     * @return array
+     */
     public function run() {
         $methodName = isset($this->data[ METHOD ])
             ? $this->data[ METHOD ]

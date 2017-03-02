@@ -1,6 +1,12 @@
 <?php
 /**
  * @api-call wrongMethod
+ *
+ * Mandatory class that used for processing unknown api calls.
+ * Throws BadMethodCallException with text 'Unknown method' if input
+ * data does not contains api method or  'Wrong method METHOD_NAME'
+ * if desired api call method can not be found.
+ *
  */
 namespace methods;
 
@@ -20,7 +26,6 @@ class WrongMethod implements MethodInterface
     }
 
     /**
-     * @return array
      * @throws \BadMethodCallException
      */
     public function __invoke() {

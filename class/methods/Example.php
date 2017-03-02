@@ -10,7 +10,9 @@ class Example implements MethodInterface
     private $data;
 
     /**
-     * Method constructor.
+     * $_POST or $_GET array will be passed as $data argument
+     * depends of GET and DEBUG constants set in environment.php
+     *
      * @param array $data
      */
     public function __construct($data) {
@@ -18,6 +20,9 @@ class Example implements MethodInterface
     }
 
     /**
+     * Put api call processing code here.
+     * MUST return an array or throw an Exception
+     *
      * @return array
      */
     public function __invoke() {

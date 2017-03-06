@@ -76,7 +76,7 @@ class Controller
             ? $this->methods[ $methodName ]
             : $this->methods['wrongMethod'];
 
-        $result = ['r' => [], 'e' => []];
+        $result = ['r' => [], 'e' => (object)[]];
         try {
             $request     = new $class($this->data);
             $result['r'] = $request();

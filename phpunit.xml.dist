@@ -9,7 +9,7 @@
          bootstrap="test/bootstrap.php"
 >
  <testsuites>
-  <testsuite name="RxPHP Test Suite">
+  <testsuite name="php-api-skeleton Test Suite">
    <directory suffix="Test.php">./test/</directory>
   </testsuite>
  </testsuites>

@@ -75,7 +75,7 @@ class Controller
      * @return array
      */
     public function run () {
-        $result = ['r' => [], 'e' => (object)[]];
+        $result = ['r' => (object)[], 'e' => (object)[]];
         if (!isset($this->data[METHOD])) {
             $result['e'] = ['code' => 0, 'text' => 'Unknown method'];
             return $result;

@@ -88,7 +88,6 @@ class Controller
             ? $this->methods[$methodName]
             : WrongMethod::class;
 
-        $result = ['r' => [], 'e' => []];
         try {
             $request     = new $class($this->data);
             $result['r'] = $request();

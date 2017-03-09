@@ -5,10 +5,10 @@ use core\Controller;
 /** @noinspection LongInheritanceChainInspection */
 class ControllerTest extends PHPUnit_Framework_TestCase
 {
-    public function testExampleCall () {
+    public function testExampleCall() {
         $controller = new Controller(['m' => 'example']);
         $this->assertEquals(
-            ['r' => ['mysql'], 'e' => []],
+            ['r' => ['mysql'], 'e' => (object)[]],
             $controller->run()
         );
     }
@@ -16,7 +16,7 @@ class ControllerTest extends PHPUnit_Framework_TestCase
     public function testWrongMethod() {
         $controller = new Controller([METHOD => 'badMethod']);
         $this->assertEquals(
-            ['r' => [], 'e' => ['code' => 0, 'text' => 'Wrong method badMethod']],
+            ['r' => (object)[], 'e' => ['code' => 0, 'text' => 'Wrong method badMethod']],
             $controller->run()
         );
     }
@@ -24,12 +24,12 @@ class ControllerTest extends PHPUnit_Framework_TestCase
     public function testNoMethod() {
         $controller = new Controller([]);
         $this->assertEquals(
-            ['r' => [], 'e' => ['code' => 0, 'text' => 'Unknown method']],
+            ['r' => (object)[], 'e' => ['code' => 0, 'text' => 'Unknown method']],
             $controller->run()
         );
     }
 
-    public function testUseStaticMapping () {
+    public function testUseStaticMapping() {
         $method = new ReflectionMethod(
             new Controller([]), 'mapStatic'
         );
@@ -42,7 +42,7 @@ class ControllerTest extends PHPUnit_Framework_TestCase
         );
     }
 
-    public function testParseTokensForDumbFile () {
+    public function testParseTokensForDumbFile() {
         $method = new ReflectionMethod(
             new Controller([]), 'parseTokens'
         );

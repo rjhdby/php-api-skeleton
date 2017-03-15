@@ -8,27 +8,29 @@
 
     .
     ├── class
-    │   ├── core                     # Classes that providing core functionality
-    │   │    ├── Config.php          # Providing methods for parse INI-files and retrieve his values
-    │   │    ├── Controller.php      # Main class that orchestrating api calls
-    │   │    └── MethodInterface.php # Interface for 'methods' classes
-    │   ├── methods                  # Classes that providing processing api calls 
-    │   │    ├── Example.php         # Example of simple api call handler
-    │   │    ├── WrongMethod.php     # Mandatory class that used for processing unknown api calls
+    │   ├── core                      # Classes that providing core functionality
+    │   │    ├── Config.php           # Providing methods for parse INI-files and retrieve his values
+    │   │    ├── Controller.php       # Main class that orchestrating api calls
+    │   │    └── MethodInterface.php  # Interface for 'methods' classes
+    │   ├── methods                   # Classes that providing processing api calls
+    │   │    ├── core                 
+    │   │    │    └── WrongMethod.php # Mandatory class that used for processing unknown api calls
+    │   │    ├── example              
+    │   │    │    └── Example.php     # Example of simple api call handler
     │   │    └── ...
     │   └── db                
-    │        └── MyPdoConnection.php # Template singleton for PDO connection. Just for my own purposes. :)  
+    │        └── MyPdoConnection.php  # Template singleton for PDO connection. Just for my own purposes. :)  
     ├── config
-    │   ├── environment.php          # Global project properties
-    │   ├── methods.php              # Static mapping for api calls. May be deleted if dynamic mapping is used 
-    │   └── properties.php           # User defined properties that can be retrieved by Config::get() method
-    ├── test                         # PHPUnit test classes
-    │   ├── bootstrap.php            # Bootstrap for PHPUnit
+    │   ├── environment.php           # Global project properties
+    │   ├── methods.php               # Static mapping for api calls. May be deleted if dynamic mapping is used 
+    │   └── properties.php            # User defined properties that can be retrieved by Config::get() method
+    ├── test                          # PHPUnit test classes
+    │   ├── bootstrap.php             # Bootstrap for PHPUnit
     │   └── ...
-    ├── index.php                    # Entry point  
-    ├── LICENSE.txt                  # License. And what you expected?
-    ├── README.md                    # This text
-    └── ...                          # All other files is used for tests and code quality checks
+    ├── index.php                     # Entry point  
+    ├── LICENSE.txt                   # License. And what you expected?
+    ├── README.md                     # This text
+    └── ...                           # All other files is used for tests and code quality checks
 
 ## Setup
 
@@ -103,7 +105,7 @@ Default behavior. Set constant `STATIC_MAPPING` in `environment.php` to `TRUE` t
 ```php
 <?php
 /** @api-call wrongMethod */
-namespace methods;
+namespace methods\core;
 use core\MethodInterface;
 
 class WrongMethod implements MethodInterface{
@@ -121,6 +123,6 @@ Set constant `STATIC_MAPPING` in `environment.php` to `TRUE` to use static mappi
 ### config/methods.php
 INI-style file containing static mapping for api calls. May be deleted if dynamic mapping is used
 ```ini
-example = methods\Example
-wrongMethod = methods\WrongMethod
+example = methods\example\Example
+wrongMethod = methods\core\WrongMethod
 ```

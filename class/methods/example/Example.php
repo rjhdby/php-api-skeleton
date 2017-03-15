@@ -1,6 +1,6 @@
 <?php
 /** @api-call example */
-namespace methods;
+namespace methods\example;
 
 use core\Config;
 use core\MethodInterface;
@@ -24,6 +24,7 @@ class Example implements MethodInterface
      * MUST return an array or throw an Exception
      *
      * @return array
+     * @throws \InvalidArgumentException
      */
     public function __invoke() {
         return [Config::get('db_type')];

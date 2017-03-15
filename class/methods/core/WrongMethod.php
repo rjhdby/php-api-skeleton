@@ -8,7 +8,7 @@
  * if desired api call method can not be found.
  *
  */
-namespace methods;
+namespace methods\core;
 
 use BadMethodCallException;
 use core\MethodInterface;

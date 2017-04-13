@@ -4,7 +4,7 @@ if (is_file('vendor/autoload.php')) {
     @include_once 'vendor/autoload.php';
 }
 
-define('ROOT', str_replace('\\', '/', __DIR__) . '/..');  //Root api directory
+define('ROOT', str_replace('\\', '/', __DIR__) . '/../src');  //Root api directory
 define('PROPERTIES', ROOT . '/config/properties.php');    //Properties file path
 define('METHODS', ROOT . '/config/methods.php');          //Configuration file for static mapping
 define('DEBUG', true);                                    //Whether use debug mode
@@ -19,7 +19,7 @@ ini_set('display_startup_errors', DEBUG ? 'On' : 'Off');
 
 spl_autoload_register(
     function ($class) {
-        foreach ([__DIR__ . '/../class', __DIR__] as $root) {
+        foreach ([ROOT . '/class', __DIR__] as $root) {
             $class = str_replace('\\', '/', $class);
             $file  = $root . '/' . $class . '.php';
             if (is_file($file)) {

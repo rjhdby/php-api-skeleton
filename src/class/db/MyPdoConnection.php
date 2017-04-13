@@ -42,6 +42,7 @@ class MyPdoConnection
 
     /**
      * @return string
+     * @throws \InvalidArgumentException
      */
     private static function getConnectionString () {
         return Config::get(self::TYPE) . ':' .

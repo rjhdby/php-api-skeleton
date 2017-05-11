@@ -11,7 +11,7 @@ spl_autoload_register(
             $file  = $root . '/class/' . $class . '.php';
             if (is_file($file)) {
                 /** @noinspection PhpIncludeInspection */
-                include_once $file;
+                require_once $file;
 
                 return;
             }

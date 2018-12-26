@@ -12,18 +12,18 @@
     │   │   ├── core                      # Classes that providing core functionality
     │   │   │    ├── Config.php           # Providing methods for parse INI-files and retrieve his values
     │   │   │    ├── Controller.php       # Main class that orchestrating api calls
-    │   │   │    └── MethodInterface.php  # Interface for 'methods' classes
+    │   │   │    └── Method.php           # Abstract class for 'methods' classes inheritance
     │   │   ├── methods                   # Classes that providing processing api calls
-    │   │   │    ├── core                 
-    │   │   │    │    └── WrongMethod.php # Mandatory class that used for processing unknown api calls
     │   │   │    ├── example              
     │   │   │    │    └── Example.php     # Example of simple api call handler
     │   │   │    └── ...
+    │   │   └── errors
+    │   │   │    └── ...                  # Custom exceptions
     │   │   └── db                
     │   │        └── MyPdoConnection.php  # Template singleton for PDO connection. Just for my own purposes. :)  
     │   ├── config
     │   │   ├── environment.php           # Global project properties
-    │   │   ├── methods.php               # Static mapping for api calls. May be deleted if dynamic mapping is used 
+    │   │   ├── autoload.php              # Autoload realization 
     │   │   └── properties.php            # User defined properties that can be retrieved by Config::get() method
     │   └── index.php                     # Entry point
     ├── test                              # PHPUnit test classes
@@ -42,7 +42,7 @@ File with global project properties. You **must** view and edit it before using 
 ```php
 define('ROOT', str_replace('\\', '/', __DIR__) . '/..');  //Root api directory
 define('PROPERTIES', ROOT . '/config/properties.php');    //Properties file path
-define('METHODS', ROOT . '/config/methods.php');          //Configuration file for static mapping
+define('METHODS', '/tmp/methods.json');                   //Temp file for methods cache
 define('DEBUG', true);                                    //Whether use debug mode
 define('METHOD', 'm');                                    //Name of parameter in POST/GET data that contains method name
 define('GET', false);                                     //Whether use $_GET instead of $_POST
@@ -53,10 +53,11 @@ define('CASE_SENSITIVE', true);                           //Whether api calls me
 ## Using
 See [class/methods/Example.php](https://github.com/rjhdby/api-skeleton/blob/master/class/methods/Example.php).
 
-Each method must implements `core\MethodInterface` interface.
-  * Method `__construct` must receive an associative array ($_GET or $_POST will be forwarded to constructor)
+  * Each method must extends abstract `core\Method` class.
+  * All api-call classes should be placed under `class/methods/` directory.
+  * Method `__construct($get, $post, $files, $body)` will receive 4 associative arrays ($_GET, $_POST, $_FILES adn JSON-decoded request body)
   * Method `__invoke` must return an array or throw an Exception
-
+    
 The request to `index.php` must contains name of desired method, or an `Wrong method` error will be returned.
 
 The response will be a JSON string.
@@ -80,7 +81,24 @@ The response will be a JSON string.
 }
 ```
 
-### config/properties.php
+## Class `Method`
+
+You can access to input data through those fields.
+
+```php
+$_GET['key']   === $this->get['key'] === $this['key'];
+$_POST['key']  === $this->post['key'];
+$_FILES['key'] === $this->files['key'];
+json_decode(file_get_contents('php://input'), true)['key'] === $this->body['key'];
+```
+
+## methods
+```
+protected function has(...$keys)            // returns TRUE, if all keys present inside `$this->get`   
+protected function missing($keys)           // returns TRUE, if at least one key not present inside `$this->get`
+protected function checkParams(...$keys)    // returns nothing. Throws ParameterException if at least one key not present inside `$this->get`
+```
+## config/properties.php
 Standard INI-file. All settings may be used inside the project with `Config::get()` method.
 
 **properties.php**
@@ -97,33 +115,18 @@ db_dbname=db
 $dbUser = core\Config::get('db_user');
 ```
 
-## Dynamic class mapping
-Default behavior. Set constant `STATIC_MAPPING` in `environment.php` to `TRUE` to disable.
 
-1. All api-call classes should be placed in `class/methods/` directory. 
-2. Each api-call class should contain PHP-doc comment with `@api-call` annotation before namespace declaration. Value of this annotation will be used as api-call method name.
+
+## Dynamic class mapping
+ 
 
 ```php
 <?php
-/** @api-call myMethod */
 namespace methods\core;
-use core\MethodInterface;
+use core\Method;
 
-class MyMethod implements MethodInterface{
-    public function __construct($data) {}
+class MyMethod extends Method {
     public function __invoke() {}
 }
 ```
 
-In this case you can delete file `methods.php`
-
-## Static class mapping 
-Disabled by default.
-Set constant `STATIC_MAPPING` in `environment.php` to `TRUE` to use static mapping instead of dynamic.
-
-### config/methods.php
-INI-style file containing static mapping for api calls. May be deleted if dynamic mapping is used
-```ini
-example = methods\example\Example
-wrongMethod = methods\core\WrongMethod
-```

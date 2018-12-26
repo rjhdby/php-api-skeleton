@@ -3,12 +3,20 @@
 use core\Config;
 
 /** @noinspection LongInheritanceChainInspection */
+
 final class ConfigTest extends PHPUnit_Framework_TestCase
 {
     public function testGetConfigValue() {
         $this->assertEquals(
             'mysql',
             Config::get('db_type')
+        );
+    }
+
+    public function testGetConfigArray() {
+        $this->assertEquals(
+            ['one', 'two', 'three'],
+            Config::getArray('array')
         );
     }
 
@@ -29,23 +37,33 @@ final class ConfigTest extends PHPUnit_Framework_TestCase
         Config::get('');
     }
 
-    public function testCustomParse() {
+    public function testParseCustomConfig() {
         $this->assertEquals(
-            ['example'     => 'methods\Example',
-             'wrongMethod' => 'methods\WrongMethod'],
-            Config::parseCustomConfig(METHODS)
+            [
+                'db_type' => 'mysql',
+                'db_host' => 'localhost',
+                'db_user' => 'user',
+                'db_pass' => 'pass',
+                'db_name' => 'db',
+                'array'   => 'one, two, three'
+            ],
+            Config::parseCustomConfig(PROPERTIES)
         );
     }
 
-    public function testGetConfigValueHard() {
-        $method = new ReflectionMethod(
-            new Config(), 'parseIniFile'
-        );
-        $method->setAccessible(true);
-        $method->invoke(new Config(), PROPERTIES);
+    public function testParseIniFile() {
+        $reflect = new ReflectionMethod(Config::class, 'parseIniFile');
+        $reflect->setAccessible(true);
         $this->assertEquals(
-            'localhost',
-            Config::get('db_host')
+            [
+                'db_type' => 'mysql',
+                'db_host' => 'localhost',
+                'db_user' => 'user',
+                'db_pass' => 'pass',
+                'db_name' => 'db',
+                'array'   => 'one, two, three'
+            ],
+            $reflect->invoke(null, PROPERTIES)
         );
     }
 }

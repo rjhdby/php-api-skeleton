@@ -1,4 +1,5 @@
 <?php
+
 namespace core;
 
 use InvalidArgumentException;
@@ -9,10 +10,15 @@ use InvalidArgumentException;
  *
  * Providing methods for parse INI-files and retrieve his values
  */
-class Config
+final class Config
 {
     /** @var  array $settings */
     private static $settings;
+
+    /**
+     * Config constructor.
+     */
+    private function __construct() { }
 
     /**
      * Return value by key from config/properties.php
@@ -31,14 +37,26 @@ class Config
         }
         if (isset(self::$settings[ $name ])) {
             return (string)self::$settings[ $name ];
-        } elseif ($default !== null) {
+        }
+        if ($default !== null) {
             return $default;
         }
         throw new InvalidArgumentException("Setting $name not found");
     }
 
+    public static function getArray($name) {
+        $raw = self::get($name);
+
+        $out = explode(',', $raw);
+        foreach ($out as &$value) {
+            $value = trim($value);
+        }
+
+        return $out;
+    }
+
     private static function loadSettings($fileName) {
-        return function_exists('parse_ini_file')
+        return \function_exists('parse_ini_file')
             ? parse_ini_file($fileName)
             : self::parseIniFile($fileName);
     }
@@ -50,7 +68,7 @@ class Config
      * @return array
      */
     private static function parseIniFile($fileName) {
-        $settings = [];
+        $settings = array();
         $content  = preg_grep("/^[\w .]+=.*/", explode("\n", file_get_contents($fileName)));
         foreach ($content as $row) {
             $row              = strstr($row . ';', ';', true);

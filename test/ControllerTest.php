@@ -1,54 +1,64 @@
 <?php
 
 use core\Controller;
+use errors\ParameterException;
+use errors\WrongMethodException;
 
 /** @noinspection LongInheritanceChainInspection */
+
 class ControllerTest extends PHPUnit_Framework_TestCase
 {
-    public function testExampleCall() {
-        $controller = new Controller(['m' => 'example']);
+    public function testGetMethodFromGet() {
+        $method = $this->initCall([METHOD => 'example']);
         $this->assertEquals(
-            ['r' => ['mysql'], 'e' => (object)[]],
-            $controller->run()
+            ['mysql'],
+            $method()
+        );
+    }
+
+    public function testGetMethodFromPost() {
+        $method = $this->initCall([], [METHOD => 'example']);
+        $this->assertEquals(
+            ['mysql'],
+            $method()
+        );
+    }
+
+    public function testGetMethodFromBody() {
+        $method = $this->initCall([], [], [], '{"m":"example"}');
+        $this->assertEquals(
+            ['mysql'],
+            $method()
         );
     }
 
     public function testWrongMethod() {
-        $controller = new Controller([METHOD => 'badMethod']);
-        $this->assertEquals(
-            ['r' => (object)[], 'e' => ['code' => 0, 'text' => 'Wrong method badMethod']],
-            $controller->run()
-        );
+        $this->expectException(WrongMethodException::class);
+        $this->initCall([METHOD => 'badMethod']);
     }
 
     public function testNoMethod() {
-        $controller = new Controller([]);
-        $this->assertEquals(
-            ['r' => (object)[], 'e' => ['code' => 0, 'text' => 'Unknown method']],
-            $controller->run()
-        );
+        $this->expectException(ParameterException::class);
+        $this->initCall();
     }
 
-    public function testUseStaticMapping() {
-        $method = new ReflectionMethod(
-            new Controller([]), 'mapStatic'
-        );
-        $method->setAccessible(true);
-        $this->assertEquals([
-                                'example'     => 'methods\Example',
-                                'wrongMethod' => 'methods\WrongMethod'
-                            ],
-                            $method->invoke(new Controller([]))
-        );
+    public function testExpiredCacheForMethodFile() {
+        $file                        = file_get_contents(METHODS);
+        $methods                     = json_decode($file, true);
+        $methods['example']['mtime'] = 0;
+        file_put_contents(METHODS, json_encode($methods));
+        $this->testGetMethodFromGet();
     }
 
-    public function testParseTokensForDumbFile() {
-        $method = new ReflectionMethod(
-            new Controller([]), 'parseTokens'
-        );
-        $method->setAccessible(true);
-        $this->assertEquals(false,
-                            $method->invoke(new Controller([]), token_get_all(file_get_contents(ROOT . '/class/core/MethodInterface.php')))
-        );
+    /**
+     * @param array $get
+     * @param array $post
+     * @param array $files
+     * @param string $body
+     * @return \core\Method
+     * @throws \errors\ParameterException
+     */
+    private function initCall(array $get = [], array $post = [], array $files = [], $body = '') {
+        return Controller::getMethod($get, $post, $files, $body);
     }
 }

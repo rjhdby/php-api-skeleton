@@ -1,116 +1,147 @@
 <?php
+
 namespace core;
 
-use methods\core\WrongMethod;
+use errors\ParameterException;
+use errors\WrongMethodException;
+use Exception;
 use RecursiveDirectoryIterator;
 use RecursiveIteratorIterator;
 use RecursiveRegexIterator;
 use RegexIterator;
 
-/**
- * Class Controller
- * @package core
- *
- * Main class that orchestrating api calls
- */
 class Controller
 {
-    private $methods = [];
-    private $data;
+    /**
+     * @param $get
+     * @param $post
+     * @param $files
+     * @param $body
+     * @return Method
+     * @throws ParameterException
+     * @throws WrongMethodException
+     */
+    public static function getMethod($get, $post, $files, $body) {
+        $methodName = mb_strtolower(self::getMethodName($get, $post, $body));
+        $method     = self::findMethod($methodName);
+        /** @noinspection PhpIncludeInspection */
+        require_once $method['path'];
+        $class = $method['ns'] . $method['class'];
+
+        return new $class($get, $post, $files, $body);
+    }
 
     /**
-     * $_POST or $_GET array will be passed as $data argument
-     * depends of GET and DEBUG constants set in environment.php
-     *
-     * @param array $data
+     * @param $get
+     * @param $post
+     * @param $body
+     * @return mixed
+     * @throws ParameterException
      */
-    public function __construct($data) {
-        $this->data    = $data;
-        $this->methods = STATIC_MAPPING
-            ? self::mapStatic()
-            : self::mapDynamic();
-        if (!CASE_SENSITIVE) {
-            $this->methods = array_change_key_case($this->methods, CASE_LOWER);
+    private static function getMethodName($get, $post, $body) {
+        if (isset($get[ METHOD ])) {
+            return $get[ METHOD ];
         }
+        if (isset($post[ METHOD ])) {
+            return $post[ METHOD ];
+        }
+        try {
+            $parsedBody = json_decode($body, true);
+            if (isset($parsedBody[ METHOD ])) {
+                return $parsedBody[ METHOD ];
+            }
+        } catch (Exception $e) {
+        }
+
+        throw new ParameterException('Method does not set');
     }
 
-    private static function mapStatic() {
-        return Config::parseCustomConfig(METHODS);
+    /**
+     * @param string $methodName
+     * @return array
+     * @throws WrongMethodException
+     */
+    private static function findMethod($methodName) {
+        $methodName = mb_strtolower($methodName);
+        $methods    = [];
+        if (is_file(METHODS)) {
+            $file    = file_get_contents(METHODS);
+            $methods = json_decode($file, true);
+            if (isset($methods[ $methodName ])) {
+                $method = $methods[ $methodName ];
+                $stat   = stat($method['path']);
+                if ($stat['size'] !== $method['size'] || $stat['mtime'] !== $method['mtime']) {
+                    $methods = [];
+                }
+            }
+        }
+        if (empty($methods) || !isset($methods[ $methodName ])) {
+            $methods = self::reReadMethods();
+        }
+        if (empty($methods) || !isset($methods[ $methodName ])) {
+            throw new WrongMethodException($methodName);
+        }
+
+        return $methods[ $methodName ];
     }
 
-    private static function mapDynamic() {
+    private static function reReadMethods() {
         $methods  = [];
         $iterator = new RecursiveIteratorIterator(new RecursiveDirectoryIterator(ROOT . '/class/methods'));
         $regex    = new RegexIterator($iterator, '/^.+\.php$/i', RecursiveRegexIterator::GET_MATCH);
-        foreach ($regex as $file => $value) {
-            $current = self::parseTokens(token_get_all(file_get_contents(str_replace('\\', '/', $file))));
-            if ($current !== false) {
-                $methods[ key($current) ] = current($current);
+        foreach ($regex as $file) {
+            $filePath = str_replace('\\', '/', $file[0]);
+            $stat     = stat($filePath);
+            $current  = self::parseTokens($filePath);
+            if (empty($current)) {
+                continue;
             }
+            $methods[ mb_strtolower($current['class']) ] = [
+                'path'  => $filePath,
+                'size'  => $stat['size'],
+                'mtime' => $stat['mtime'],
+                'class' => $current['class'],
+                'ns'    => $current['ns']
+            ];
         }
+        self::saveMapping($methods);
 
         return $methods;
     }
 
-    private static function parseTokens(array $tokens) {
+    private static function parseTokens($file) {
+        $tokens     = token_get_all(file_get_contents($file));
         $nsStart    = false;
         $classStart = false;
         $namespace  = '';
-        $method     = '';
         foreach ($tokens as $token) {
-            if ($token[0] === T_CLASS) {
-                if ($classStart && $method === '') {
-                    return false;
-                }
-                $classStart = true;
-            }
-            if ($classStart && $token[0] === T_STRING) {
-                return [$method => $namespace . $token[1]];
-            }
-            if ($token[0] === T_DOC_COMMENT && preg_match('/@api-call/m', $token[1]) !== 0) {
-                $method = preg_replace("/.*@api-call\s+(\w+).*/s", "$1", $token[1]);
-            }
-            if ($token[0] === T_NAMESPACE) {
-                $nsStart = true;
-            }
-            if ($nsStart && $token[0] === ';') {
-                $nsStart = false;
-            }
-            if ($nsStart && $token[0] === T_STRING) {
-                $namespace .= $token[1] . '\\';
+            switch ($token[0]) {
+                case ';':
+                    if ($nsStart) {
+                        $nsStart = false;
+                    }
+                    break;
+                case T_CLASS:
+                    $classStart = true;
+                    break;
+                case T_NAMESPACE:
+                    $nsStart = true;
+                    break;
+                case T_STRING:
+                    if ($classStart) {
+                        return ['class' => $token[1], 'ns' => $namespace];
+                    }
+                    if ($nsStart) {
+                        $namespace .= $token[1] . '\\';
+                    }
+                    break;
             }
         }
 
-        return false;
+        return [];
     }
 
-    /**
-     * Process api call and return resulting array or throw an Exception
-     *
-     * @return array
-     */
-    public function run() {
-        $result = ['r' => (object)[], 'e' => (object)[]];
-        if (!isset($this->data[ METHOD ])) {
-            $result['e'] = ['code' => 0, 'text' => 'Unknown method'];
-
-            return $result;
-        }
-        $methodName = $this->data[ METHOD ];
-        if (CASE_SENSITIVE === false) {
-            $methodName = mb_strtolower($methodName);
-        }
-        $class = isset($this->methods[ $methodName ])
-            ? $this->methods[ $methodName ]
-            : WrongMethod::class;
-
-        try {
-            $request     = new $class($this->data);
-            $result['r'] = $request();
-        } catch (\Exception $e) {
-            $result['e'] = ['code' => $e->getCode(), 'text' => $e->getMessage()];
-        }
-
-        return $result;
+    private static function saveMapping(array $methods) {
+        file_put_contents(METHODS, json_encode($methods));
     }
 }

@@ -1,24 +1,11 @@
 <?php
-/** @api-call example */
 namespace methods\example;
 
 use core\Config;
-use core\MethodInterface;
+use core\Method;
 
-class Example implements MethodInterface
+class Example extends Method
 {
-    private $data;
-
-    /**
-     * $_POST or $_GET array will be passed as $data argument
-     * depends of GET and DEBUG constants set in environment.php
-     *
-     * @param array $data
-     */
-    public function __construct($data) {
-        $this->data = $data;
-    }
-
     /**
      * Put api call processing code here.
      * MUST return an array or throw an Exception
@@ -28,5 +15,52 @@ class Example implements MethodInterface
      */
     public function __invoke() {
         return [Config::get('db_type')];
+    }
+
+    /**
+     * @param $param
+     * @return mixed
+     */
+    public function proxyGetParam($param) {
+        return $this[ $param ];
+    }
+
+    /**
+     * @param $param
+     * @return bool
+     */
+    public function proxyHas($param) {
+        return $this->has($param);
+    }
+
+    /**
+     * @param $param
+     * @return bool
+     */
+    public function proxyMissing($param) {
+        return $this->missing(...func_get_args());
+    }
+
+    /**
+     * @param array|string $keys
+     * @throws \errors\ParameterException
+     */
+    public function proxyCheckParams(...$keys) {
+        $this->checkParams(...func_get_args());
+    }
+
+    /**
+     * @param string $key
+     * @param mixed $value
+     */
+    public function proxyOffsetSet($key, $value) {
+        $this[ $key ] = $value;
+    }
+
+    /**
+     * @param string $key
+     */
+    public function proxyOffsetUnSet($key) {
+        unset($this[ $key ]);
     }
 }

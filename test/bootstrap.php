@@ -6,7 +6,7 @@ if (is_file('vendor/autoload.php')) {
 
 define('ROOT', str_replace('\\', '/', __DIR__) . '/../src');  //Root api directory
 define('PROPERTIES', ROOT . '/config/properties.php');    //Properties file path
-define('METHODS', ROOT . '/config/methods.php');          //Configuration file for static mapping
+define('METHODS', '/tmp/methods.json');                   //Temp file for methods cache
 define('DEBUG', true);                                    //Whether use debug mode
 define('EXCEPTIONS', true);                               //Whether use exceptions instead of E_USER_NOTICE
 define('METHOD', 'm');                                    //Name of parameter in POST/GET data that contains method name

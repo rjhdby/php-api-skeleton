@@ -8,22 +8,24 @@
          syntaxCheck="false"
          bootstrap="test/bootstrap.php"
 >
- <testsuites>
-  <testsuite name="php-api-skeleton Test Suite">
-   <directory suffix="Test.php">./test/</directory>
-  </testsuite>
- </testsuites>
- <filter>
-  <whitelist processUncoveredFilesFromWhitelist="true">
-   <directory suffix=".php">./class/</directory>
-   <exclude>
-    <directory suffix="Interface.php">./class/</directory>
-    <file>./class/db/MyPdoConnection.php</file>
-   </exclude>
-  </whitelist>
- </filter>
+    <testsuites>
+        <testsuite name="php-api-skeleton Test Suite">
+            <directory suffix="Test.php">./test/</directory>
+        </testsuite>
+    </testsuites>
+    <filter>
+        <whitelist processUncoveredFilesFromWhitelist="true">
+            <directory suffix=".php">./src/class/</directory>
+            <exclude>
+                <directory suffix="Interface.php">./src/class/</directory>
+                <file>./src/class/db/MyPdoConnection.php</file>
+                <file>./src/class/methods/example/FakeExample.php</file>
+                <file>./src/class/methods/example/Example.php</file>
+            </exclude>
+        </whitelist>
+    </filter>
 
- <logging>
-  <log type="coverage-clover" target="build/logs/clover.xml"/>
- </logging>
+    <logging>
+        <log type="coverage-clover" target="build/logs/clover.xml"/>
+    </logging>
 </phpunit>
